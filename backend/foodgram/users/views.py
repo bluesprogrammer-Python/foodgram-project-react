@@ -1,10 +1,10 @@
 from django.shortcuts import render
 
-from rest_framework import viewsets
+from djoser.views import UserViewSet
 from .serializers import UserSerializers
 from .models import User
 
 
-class UserViewSet(viewsets.ModelViewSet):
+class CustomUserViewSet(UserViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializers
