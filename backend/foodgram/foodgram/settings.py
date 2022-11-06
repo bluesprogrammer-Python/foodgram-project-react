@@ -1,5 +1,4 @@
 import os
-from datetime import timedelta
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -118,13 +117,23 @@ AUTH_USER_MODEL = 'users.User'
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated', 
+        'rest_framework.permissions.IsAuthenticated',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
     ],
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'DEFAULT_PAGINATION_CLASS': [
+        'rest_framework.pagination.PageNumberPagination'
+    ],
     'PAGE_SIZE': 5,
+}
+
+DJOSER = {
+    'HIDE_USERS': False,
+    'SERIALIZERS': {
+        'user': 'users.serializers.UserSerializers',
+        'current_user': 'users.serializers.UserSerializers',
+    },
 }
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
