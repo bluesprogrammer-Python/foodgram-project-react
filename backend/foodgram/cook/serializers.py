@@ -6,7 +6,6 @@ from users.serializers import UserSerializers
 from .models import (Favorite, Recipes, ShoppingCart, Tags, ingredient_recipe,
                      ingredients)
 
-
 COUNT = 'amount'
 
 
