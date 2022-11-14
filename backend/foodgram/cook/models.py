@@ -4,7 +4,7 @@ from django.db import models
 from users.models import User
 
 
-class ingredients(models.Model):
+class Ingredients(models.Model):
     name = models.CharField(
         max_length=200,
         db_index=True,
@@ -44,8 +44,8 @@ class Recipes(models.Model):
         return self.name
 
 
-class ingredient_recipe(models.Model):
-    ingredients = models.ForeignKey(ingredients, on_delete=models.CASCADE)
+class IngredientRecipe(models.Model):
+    ingredients = models.ForeignKey(Ingredients, on_delete=models.CASCADE)
     recipe = models.ForeignKey(Recipes, on_delete=models.CASCADE)
     amount = models.PositiveSmallIntegerField()
 
@@ -59,10 +59,14 @@ class Favorite(models.Model):
                              related_name='recipes_favorites',)
     recipe = models.ForeignKey(Recipes,
                                on_delete=models.CASCADE,
-                               related_name="favorites",)
+                               related_name='favorites',)
 
     def __str__(self):
         return f'{self.user}'
+    
+    class Meta():
+        models.UniqueConstraint(
+            fields=['user', 'recipe'], name='unique_recording')
 
 
 class ShoppingCart(models.Model):

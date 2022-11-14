@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'djoser',
     'users.apps.UsersConfig',
     'cook.apps.CookConfig',
+    'api.apps.ApiConfig',
     'colorfield',
 ]
 

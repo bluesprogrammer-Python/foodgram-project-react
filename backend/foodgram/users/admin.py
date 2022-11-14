@@ -1,4 +1,4 @@
-from cook.models import Favorite, Recipes, ShoppingCart, Tags, ingredients
+from cook.models import Favorite, Recipes, ShoppingCart, Tags, Ingredients
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
@@ -38,7 +38,7 @@ class FavoriteAdmin(admin.ModelAdmin):
 
 admin.site.register(User, UserAdmin)
 admin.site.register(Tags, TagsAdmin)
-admin.site.register(ingredients, IngredientsAdmin)
+admin.site.register(Ingredients, IngredientsAdmin)
 admin.site.register(Recipes, RecipesAdmin)
 admin.site.register(ShoppingCart, ShoppingCartAdmin)
 admin.site.register(Favorite, FavoriteAdmin)

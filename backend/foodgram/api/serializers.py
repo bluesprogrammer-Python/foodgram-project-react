@@ -3,15 +3,15 @@ from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 from users.serializers import UserSerializers
 
-from .models import (Favorite, Recipes, ShoppingCart, Tags, ingredient_recipe,
-                     ingredients)
+from cook.models import (Favorite, Recipes, ShoppingCart, Tags, IngredientRecipe,
+                     Ingredients)
 
 COUNT = 'amount'
 
 
-class ingredientsSerializer(serializers.ModelSerializer):
+class IngredientsSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ingredients
+        model = Ingredients
         fields = ('id', 'name', 'measurement_unit')
 
 
@@ -30,7 +30,7 @@ class IngredientRecipeSerializers(serializers.ModelSerializer):
     amount = serializers.IntegerField()
 
     class Meta:
-        model = ingredient_recipe
+        model = IngredientRecipe
         fields = ('id', 'ingredients', 'recipe', 'amount')
 
 
@@ -76,10 +76,10 @@ class RecipesSerializer(serializers.ModelSerializer):
 
     def ingredient_recipe_create(self, ingredients_set, recipe):
         for ingredient_get in ingredients_set:
-            ingredient = ingredients.objects.get(
+            ingredient = Ingredients.objects.get(
                 id=ingredient_get.get('id')
             )
-            ingredient_recipe.objects.create(ingredient=ingredient,
+            IngredientRecipe.objects.create(ingredient=ingredient,
                                              recipe=recipe,
                                              amount=ingredient_get.get(COUNT)
                                              )
@@ -106,7 +106,7 @@ class RecipesSerializer(serializers.ModelSerializer):
         tags = self.initial_data.get('tags')
         instance.tags.set(tags)
         instance.save()
-        ingredient_recipe.objects.filter(recipe=instance).delete()
+        IngredientRecipe.objects.filter(recipe=instance).delete()
         ingredients_set = self.initial_data.get('ingredients')
         self.ingredient_recipe_create(ingredients_set, instance)
         return instance

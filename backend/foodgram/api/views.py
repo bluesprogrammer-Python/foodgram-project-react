@@ -12,11 +12,11 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from users.permission import AuthorOrReadOnly
 
-from .models import (Favorite, Recipes, ShoppingCart, Tags, ingredient_recipe,
-                     ingredients)
+from cook.models import (Favorite, Recipes, ShoppingCart, Tags, IngredientRecipe,
+                     Ingredients)
 from .serializers import (FavoriteSerializers, RecipesSerializer,
                           ShoppingCardSerializers, TagsSerializer,
-                          ingredientsSerializer)
+                          IngredientsSerializer)
 
 
 class TagsViewSet(viewsets.ModelViewSet):
@@ -25,8 +25,8 @@ class TagsViewSet(viewsets.ModelViewSet):
 
 
 class ingredientsViewSet(viewsets.ModelViewSet):
-    queryset = ingredients.objects.all()
-    serializer_class = ingredientsSerializer
+    queryset = Ingredients.objects.all()
+    serializer_class = IngredientsSerializer
 
 
 class RecipesViewSet(viewsets.ModelViewSet):
@@ -63,7 +63,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
     @action(detail=False, permission_classes=[permissions.IsAuthenticated])
     def download_shopping_cart(self, request):
         user = request.user
-        ingredients = ingredient_recipe.objects.filter(
+        ingredients = IngredientRecipe.objects.filter(
             recipe__shopping_carts__user=user).values(
                 'ingredient__name',
                 'ingredient__measurement_unit').annotate(amount=Sum('amount'))
