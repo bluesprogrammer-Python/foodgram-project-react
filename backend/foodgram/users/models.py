@@ -44,7 +44,7 @@ class User(AbstractUser):
         blank=False,
         verbose_name='Пароль'
     )
-    ACCESS_LEVEL = models.CharField(
+    role = models.CharField(
         max_length=50,
         null=True,
         choices=ACCESS_LEVEL,

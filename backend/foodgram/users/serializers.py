@@ -1,10 +1,10 @@
-from cook.models import Recipes
+from cook.models import Recipe
 from rest_framework import serializers
 
 from .models import Follow, User
 
 
-class UserSerializers(serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
@@ -20,13 +20,13 @@ class UserSerializers(serializers.ModelSerializer):
         return Follow.objects.filter(user=user, author=obj.id).exists()
 
 
-class FollowRecipeSerializers(serializers.ModelSerializer):
+class FollowRecipeSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Recipes
+        model = Recipe
         fields = ('id', 'name', 'image', 'cooking_time')
 
 
-class FollowUserSerializers(serializers.ModelSerializer):
+class FollowUserSerializer(serializers.ModelSerializer):
     id = serializers.ReadOnlyField(source='author.id')
     email = serializers.ReadOnlyField(source='author.email')
     username = serializers.ReadOnlyField(source='author.username')
@@ -46,4 +46,4 @@ class FollowUserSerializers(serializers.ModelSerializer):
         return Follow.objects.filter(user=user, author=obj.author).exists()
 
     def get_recipes_count(self, obj):
-        return Recipes.objects.filter(author=obj.author).count()
+        return Recipe.objects.filter(author=obj.author).count()

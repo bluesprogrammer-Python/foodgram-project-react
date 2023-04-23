@@ -12,27 +12,27 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from users.permission import AuthorOrReadOnly
 
-from cook.models import (Favorite, Recipes, ShoppingCart, Tags, IngredientRecipe,
-                     Ingredients)
-from .serializers import (FavoriteSerializers, RecipesSerializer,
-                          ShoppingCardSerializers, TagsSerializer,
-                          IngredientsSerializer)
+from cook.models import (Favorite, Recipe, ShoppingCart, Tag, RecipeIngredient,
+                     Ingredient)
+from .serializers import (FavoriteSerializer, RecipeSerializer,
+                          ShoppingCardSerializer, TagSerializer,
+                          IngredientSerializer)
 
 
-class TagsViewSet(viewsets.ModelViewSet):
-    queryset = Tags.objects.all()
-    serializer_class = TagsSerializer
+class TagViewSet(viewsets.ModelViewSet):
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
 
 
-class ingredientsViewSet(viewsets.ModelViewSet):
-    queryset = Ingredients.objects.all()
-    serializer_class = IngredientsSerializer
+class IngredientViewSet(viewsets.ModelViewSet):
+    queryset = Ingredient.objects.all()
+    serializer_class = IngredientSerializer
 
 
-class RecipesViewSet(viewsets.ModelViewSet):
+class RecipeViewSet(viewsets.ModelViewSet):
     permission_classes = (AuthorOrReadOnly,)
-    queryset = Recipes.objects.all()
-    serializer_class = RecipesSerializer
+    queryset = Recipe.objects.all()
+    serializer_class = RecipeSerializer
     filter_backends = (DjangoFilterBackend, )
 
     @action(detail=True, methods=['post', 'delete'],
@@ -41,7 +41,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
         if request.method == 'POST':
             return self.add_obj(model=Favorite,
                                 pk=pk,
-                                serializers=FavoriteSerializers,
+                                serializers=FavoriteSerializer,
                                 user=request.user)
         elif request.method == 'DELETE':
             return self.del_obj(model=Favorite, pk=pk, user=request.user)
@@ -53,7 +53,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
         if request.method == 'POST':
             return self.add_obj(model=ShoppingCart,
                                 pk=pk,
-                                serializers=ShoppingCardSerializers,
+                                serializers=ShoppingCardSerializer,
                                 user=request.user)
         if request.method == 'DELETE':
             return self.del_obj(model=ShoppingCart, pk=pk, user=request.user)
@@ -63,7 +63,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
     @action(detail=False, permission_classes=[permissions.IsAuthenticated])
     def download_shopping_cart(self, request):
         user = request.user
-        ingredients = IngredientRecipe.objects.filter(
+        ingredients = RecipeIngredient.objects.filter(
             recipe__shopping_carts__user=user).values(
                 'ingredient__name',
                 'ingredient__measurement_unit').annotate(amount=Sum('amount'))

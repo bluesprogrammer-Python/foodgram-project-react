@@ -5,7 +5,7 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
 from .models import Follow, User
-from .serializers import FollowUserSerializers
+from .serializers import FollowUserSerializer
 
 
 class CustomUserViewSet(UserViewSet):
@@ -14,7 +14,7 @@ class CustomUserViewSet(UserViewSet):
     def subscription(self, request):
         queryset = Follow.objects.filter(user=request.user)
         page = self.paginate_queryset(queryset)
-        serializer = FollowUserSerializers(page, many=True,
+        serializer = FollowUserSerializer(page, many=True,
                                            context={'request': request})
         return self.get_paginated_response(serializer.data)
 
@@ -30,7 +30,7 @@ class CustomUserViewSet(UserViewSet):
                             status=status.HTTP_400_BAD_REQUEST)
         Follow.objects.create(user=user, author=author)
         queryset = Follow.objects.get(user=request.user, author=author)
-        serializer = FollowUserSerializers(queryset,
+        serializer = FollowUserSerializer(queryset,
                                            context={'request': request})
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 

@@ -113,6 +113,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 
 AUTH_USER_MODEL = 'users.User'
 
@@ -132,8 +135,8 @@ REST_FRAMEWORK = {
 DJOSER = {
     'HIDE_USERS': False,
     'SERIALIZERS': {
-        'user': 'users.serializers.UserSerializers',
-        'current_user': 'users.serializers.UserSerializers',
+        'user': 'users.serializers.UserSerializer',
+        'current_user': 'users.serializers.UserSerializer',
     },
 }
 
