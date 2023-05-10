@@ -1,6 +1,7 @@
-from cook.models import Recipe, Tag, Ingredient
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
+
+from cook.models import Ingredient, Recipe, Tag
 
 from .models import User
 
@@ -21,7 +22,7 @@ class IngredientAdmin(admin.ModelAdmin):
 
 
 class RecipeAdmin(admin.ModelAdmin):
-    list_display = ( 'name', 'author')
+    list_display = ('name', 'author')
     list_filter = ('author', 'name', 'tags')
 
     def favorites(self, obj):

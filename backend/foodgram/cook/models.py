@@ -1,6 +1,7 @@
 from colorfield.fields import ColorField
 from django.core.validators import MinValueValidator
 from django.db import models
+
 from users.models import User
 
 
@@ -45,23 +46,13 @@ class Tag(models.Model):
         return self.name
 
 
-class RecipeIngredient(models.Model):
-    ingredient = models.ForeignKey(
-        Ingredient,
-        on_delete=models.CASCADE
-    )
-    amount = models.PositiveSmallIntegerField(
-        blank=False,
-        null=False
-    )
-
-    def __str__(self):
-        return f'{self.ingredient} {self.amount}'
-
-
 class Recipe(models.Model):
     tags = models.ManyToManyField(Tag)
-    ingredients = models.ManyToManyField(RecipeIngredient)
+    ingredients = models.ManyToManyField(
+        Ingredient,
+        through='RecipeIngredient',
+        related_name='recipes',
+    )
     image = models.ImageField(
         upload_to='recipes/',
         blank=True,
@@ -91,6 +82,25 @@ class Recipe(models.Model):
         return self.name
 
 
+class RecipeIngredient(models.Model):
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name='amounts',
+    )
+    ingredient = models.ForeignKey(
+        Ingredient,
+        on_delete=models.CASCADE
+    )
+    amount = models.PositiveSmallIntegerField(
+        blank=False,
+        null=False
+    )
+
+    def __str__(self):
+        return f'{self.ingredient} {self.amount}'
+
+
 class Favorite(models.Model):
     user = models.ForeignKey(
         User,
@@ -104,7 +114,7 @@ class Favorite(models.Model):
 
     def __str__(self):
         return f'{self.user}'
-    
+
     class Meta():
         models.UniqueConstraint(
             fields=['user', 'recipe'],
@@ -116,10 +126,11 @@ class ShoppingCart(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE
-        )
-    recipe = models.ForeignKey(Recipe,
+    )
+    recipe = models.ForeignKey(
+        Recipe,
         on_delete=models.CASCADE
-        )
+    )
 
     def __str__(self):
         return f'{self.user}'

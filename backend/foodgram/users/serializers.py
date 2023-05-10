@@ -1,5 +1,6 @@
-from cook.models import Recipe
 from rest_framework import serializers
+
+from cook.models import Recipe
 
 from .models import Follow, User
 
@@ -37,7 +38,8 @@ class FollowUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Follow
-        fields = ('id', 'user', 'author')
+        fields = ('id', 'user', 'author', 'email', 'username',
+                  'first_name', 'last_name', 'is_subscribed', 'recipes_count')
 
     def get_is_subscribed(self, obj):
         user = self.context.get('request').user
