@@ -13,13 +13,13 @@
 ### Последовательность команд при запуске:
 
 
-#### Настройка окружения проекта
-git clone git@github:bluesprogrammer-Python/foodgram-project-react.git
-cd foodgram-project-react/
-python -m venv venv
-source venv/Scripts/./activate
-pip install -r requirements.txt
-cd backend/foodgram/
+#### Подготовка к работе и настройка окуружения проекта
+git clone git@github:bluesprogrammer-Python/foodgram-project-react.git  
+cd foodgram-project-react/  
+python -m venv venv  
+source venv/Scripts/./activate  
+pip install -r requirements.txt  
+cd backend/foodgram/  
 python manage.py runserver
 
 #### База данных
