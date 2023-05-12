@@ -29,14 +29,14 @@ class CustomUserViewSet(UserViewSet):
             return Response({'errors':
                             ('Нельзя подписаться на самого себя.')},
                             status=status.HTTP_400_BAD_REQUEST)
-        Follow.objects.create(user=user, author=author)
+        Follow.objects.get_or_create(user=user, author=author)
         queryset = Follow.objects.get(user=request.user, author=author)
         serializer = FollowUserSerializer(queryset,
                                           context={'request': request})
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @subscribe.mapping.delete
-    def subscribe_delete(self, request, id=None):
+    def subscribe_delete(self, request, id):
         user = request.user
         author = get_object_or_404(User, id=id)
         if not Follow.objects.filter(user=user, author=author).exists():

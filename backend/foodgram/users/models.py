@@ -6,7 +6,7 @@ class User(AbstractUser):
     GUEST = 'guest'
     USER = 'user'
     ADMIN = 'admin'
-    ACCESS_LEVEL = [
+    ACCESS_ROLES = [
         (GUEST, 'guest'),
         (USER, 'user'),
         (ADMIN, 'administrator'),
@@ -47,7 +47,7 @@ class User(AbstractUser):
     role = models.CharField(
         max_length=50,
         null=True,
-        choices=ACCESS_LEVEL,
+        choices=ACCESS_ROLES,
         verbose_name='Уровень доступа',
         default=GUEST
     )
