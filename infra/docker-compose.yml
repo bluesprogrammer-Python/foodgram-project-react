@@ -1,27 +1,14 @@
 version: '3.3'
+
 services:
 
-  frontend:
-    image: sergeysemenov/foodgram_frontend:latest
-    build:
-      context: ../frontend
-      dockerfile: Dockerfile
-    volumes:
-      - ../frontend/:/app/result_build/
-  nginx:
-    image: nginx:1.19.3
-    ports:
-      - "80:80"
-    volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf
-      - ../frontend/build:/usr/share/nginx/html/
-      - ../docs/:/usr/share/nginx/html/api/docs/
   db:
-    image: postgres:13.0-alpine
+    image: postgres:13-alpine
     volumes:
       - /var/lib/postgresql/data/
     env_file:
       - ./.env
+
   backend:
     image: sergeysemenov/foodgram_backend:latest
     expose:
@@ -34,6 +21,26 @@ services:
       - db
     env_file:
       - ./.env
+
+  nginx:
+    image: nginx:1.19.3
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - static_value:/app/backend_static/
+      - media_value:/app/backend_media/
+      - ../frontend/build:/usr/share/nginx/html/
+      - ../docs:/usr/share/nginx/html/api/docs/
+    restart: always
+    depends_on:
+      - frontend
+
+  frontend:
+    image: sergeysemenov/foodgram_frontend
+    volumes:
+      - ../frontend/:/app/result_build/
+
 volumes:
   postgres_data:
   static_value:
