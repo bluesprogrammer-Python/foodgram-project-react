@@ -1,12 +1,9 @@
 import io
 
+from django.http import HttpResponse
 from django.db.models import Sum
-from django.http import FileResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.pdfgen.canvas import Canvas
 from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
@@ -89,22 +86,19 @@ class RecipeViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'],
             permission_classes=[permissions.IsAuthenticated])
     def download_shopping_cart(self, request):
-        user = request.user
-        ingredients = RecipeIngredient.objects.filter(
-            recipe__author=user).values(
-                'ingredient__name',
-                'ingredient__measurement_unit').annotate(amount=Sum('amount'))
-        buffer = io.BytesIO()
-        canvas = Canvas(buffer)
-        pdfmetrics.registerFont(
-            TTFont('FreeSans', 'FreeSans.ttf'))
-        canvas.setFont('FreeSans', size=24)
-        for ingredient in ingredients:
-            canvas.drawString(100, 400, f"{ingredient['ingredient__name']}")
-            canvas.drawString(200, 400, f"{ingredient['amount']}")
-            canvas.drawString(
-                300, 400, f"{ingredient['ingredient__measurement_unit']}")
-        canvas.save()
-        buffer.seek(0)
-        return FileResponse(buffer, as_attachment=True,
-                            filename='ShoppingCart.pdf')
+        shopping_cart_bucket = ShoppingCart.objects.filter(user=self.request.user)
+        recipes = [item.recipe.id for item in shopping_cart_bucket]
+        add_list = RecipeIngredient.objects.filter(
+            recipe__in=recipes).values('ingredient').annotate(amount=Sum('amount'))
+        shopping_cart_list = ''
+        for item in add_list:
+            ingredient = Ingredient.objects.get(pk=item['ingredient'])
+            amount = item['amount']
+            shopping_cart_list += (
+                f'{ingredient.name}, {amount} '
+                f'{ingredient.measurement_unit}\n')
+        response = HttpResponse(shopping_cart_list, content_type="text/plain")
+        response['Content-Disposition'] = (
+            'attachment; filename=ShoppingCart.txt'
+        )
+        return response
