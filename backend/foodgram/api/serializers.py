@@ -52,10 +52,11 @@ class RecipeFieldSerializer(serializers.ModelSerializer):
         return Favorite.objects.filter(user=user, recipe=obj.id).exists()
 
     def get_is_in_shopping_cart(self, obj):
-        user = self.context.get('request').user
-        if user.is_anonymous:
+        request = self.context.get('request')
+        if not request or request.user.is_anonymous:
             return False
-        return ShoppingCart.objects.filter(user=user, recipe=obj.id).exists()
+        return ShoppingCart.objects.filter(
+            user=request.user, recipe=obj).exists()
 
     def get_ingredients(self, obj):
         ingredients = RecipeIngredient.objects.filter(recipe=obj.id)
@@ -73,7 +74,8 @@ class IngredientInRecipeSerializer(serializers.ModelSerializer):
 
 
 class RecipeSerializer(serializers.ModelSerializer):
-    tags = TagSerializer(read_only=True, many=True)
+    tags = serializers.PrimaryKeyRelatedField(
+        queryset=Tag.objects.all(), many=True)
     ingredients = IngredientInRecipeSerializer(many=True)
     author = UserSerializer(read_only=True)
     image = Base64ImageField()
@@ -97,7 +99,7 @@ class RecipeSerializer(serializers.ModelSerializer):
             amount = ingredient['amount']
             if int(amount) <= 0:
                 raise serializers.ValidationError({
-                    'amount': 'Ошибка, количество ингредиента не должно быть равно нулю'
+                    'amount': 'Ошибка, количество ингредиента должно быть больше нуля'
                 })
         return data
 

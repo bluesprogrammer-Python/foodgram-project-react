@@ -1,9 +1,8 @@
-import io
-
 from django.http import HttpResponse
 from django.db.models import Sum
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
+from .filters import RecipeFieldsFilter
 from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
@@ -37,8 +36,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
     permission_classes = (AuthorOrReadOnly,)
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
-    filter_backends = (DjangoFilterBackend, )
+    filter_backends = (DjangoFilterBackend,)
     pagination_class = PageNumberPagination
+    filterset_class = RecipeFieldsFilter
 
     def get_serializer_class(self):
         if self.action in ('list', 'retrieve'):
