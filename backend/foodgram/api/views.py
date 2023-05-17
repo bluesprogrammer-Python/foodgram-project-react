@@ -86,7 +86,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'],
             permission_classes=[permissions.IsAuthenticated])
     def download_shopping_cart(self, request):
-        shopping_cart_bucket = ShoppingCart.objects.filter(user=self.request.user)
+        shopping_cart_bucket = ShoppingCart.objects.filter(user=request.user)
         recipes = [item.recipe.id for item in shopping_cart_bucket]
         add_list = RecipeIngredient.objects.filter(
             recipe__in=recipes).values('ingredient').annotate(amount=Sum('amount'))
