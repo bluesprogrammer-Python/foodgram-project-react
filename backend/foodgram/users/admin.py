@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from cook.models import Ingredient, Recipe, Tag
+from cook.models import Ingredient, Recipe, RecipeIngredient, Tag
 
 from .models import User
 
@@ -20,8 +20,12 @@ class IngredientAdmin(admin.ModelAdmin):
     list_display = ('name', 'measurement_unit')
     list_filter = ('name',)
 
+class IngredientInLine(admin.StackedInline):
+    model = RecipeIngredient
+
 
 class RecipeAdmin(admin.ModelAdmin):
+    inlines = [IngredientInLine]
     list_display = ('name', 'author')
     list_filter = ('author', 'name', 'tags')
 
