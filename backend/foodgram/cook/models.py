@@ -75,6 +75,7 @@ class Recipe(models.Model):
     )
     author = models.ForeignKey(
         User,
+        related_name='recipes',
         on_delete=models.CASCADE
     )
 
@@ -85,11 +86,12 @@ class Recipe(models.Model):
 class RecipeIngredient(models.Model):
     recipe = models.ForeignKey(
         Recipe,
-        on_delete=models.CASCADE,
         related_name='amounts',
+        on_delete=models.CASCADE,
     )
     ingredient = models.ForeignKey(
         Ingredient,
+        related_name='amounts',
         on_delete=models.CASCADE
     )
     amount = models.PositiveSmallIntegerField(
@@ -131,10 +133,12 @@ class Favorite(models.Model):
 class ShoppingCart(models.Model):
     user = models.ForeignKey(
         User,
+        related_name='carts',
         on_delete=models.CASCADE
     )
     recipe = models.ForeignKey(
         Recipe,
+        related_name='carts',
         on_delete=models.CASCADE
     )
 
