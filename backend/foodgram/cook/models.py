@@ -52,6 +52,7 @@ class Recipe(models.Model):
         Ingredient,
         through='RecipeIngredient',
         related_name='recipes',
+        blank=False
     )
     image = models.ImageField(
         upload_to='recipes/',
